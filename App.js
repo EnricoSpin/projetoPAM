@@ -58,6 +58,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Sistema de Cadastro</Text>
+      <Text style={styles.nomeAluno}>Aluno: Enrico Spinardi 3ºDS</Text>
 
       {/* Formulário de Cadastro */}
       <View style={styles.form}>
@@ -107,7 +108,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#d2e900",
+    backgroundColor: "#018d19",
     paddingTop: 60,
     paddingHorizontal: 20,
   },
@@ -115,7 +116,15 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
+    marginBottom: 10,
+    color: "#ffffff",
+  },
+  nomeAluno: {
+    fontSize: 16,
+    textAlign: "center",
     marginBottom: 20,
+    fontWeight: "bold",
+    color: "#ffffff",
   },
   lista: {
     width: "100%",
@@ -161,7 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   botao: {
-    backgroundColor: "#333333",
+    backgroundColor: "#047546d8",
     padding: 12,
     borderRadius: 6,
     alignItems: "center",
