@@ -58,7 +58,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Sistema de Cadastro</Text>
-      <Text style={styles.nomeAluno}>Aluno: Enrico Spinardi 3ºDS</Text>
+      <Text style={styles.nomeAluno}>Aluno: Enrico 3ºDS</Text>
 
       {/* Formulário de Cadastro */}
       <View style={styles.form}>
