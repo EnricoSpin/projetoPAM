@@ -17,6 +17,7 @@ export default function App() {
   // Estados para capturar os dados do formulário
   const [nome, setNome] = useState('');
   const [endereco, setEndereco] = useState('');
+  
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -55,6 +56,11 @@ export default function App() {
     setEndereco("");
   };
 
+  const excluirUsuario = (novoUsuario) => { 
+    setUsuarios(["", usuarios])
+    //if para validação "Deseja realmente excluir este usuário"
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Sistema de Cadastro</Text>
@@ -75,7 +81,7 @@ export default function App() {
           onChangeText={setEndereco}
         />
 
-        <TouchableOpacity style={styles.botao} onPress={adicionarUsuario}>
+        <TouchableOpacity style={[styles.botao, styles.botaoVerde]} onPress={adicionarUsuario}>
           <Text style={styles.textoBotao}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
@@ -94,6 +100,9 @@ export default function App() {
                 {item.address.street}, {item.address.suite} -{" "}
                 {item.address.city}
               </Text>
+              <TouchableOpacity style={[styles.botaoExcluir, styles.botaoVermelho]} onPress={excluirUsuario}>
+                <Text style={styles.textoBotao}>Excluir</Text>
+              </TouchableOpacity>
             </View>
           )}
           style={styles.lista}
@@ -172,10 +181,23 @@ const styles = StyleSheet.create({
   },
   botao: {
     height: 50,
-    backgroundColor: "#047546d8",
     padding: 12,
     borderRadius: 6,
     alignItems: "center",
+    margin: 5
+  },
+  botaoExcluir: {
+    height: 40,
+    padding: 12,
+    borderRadius: 6,
+    alignSelf: "flex-end",
+    margin: 5
+  },
+  botaoVerde: {
+    backgroundColor: "#047546d8",
+  },
+  botaoVermelho: {
+    backgroundColor: "#DC3545"
   },
   textoBotao: {
     color: "#ffffff",
