@@ -40,7 +40,7 @@ export default function App() {
     }
     // 2. Criação do novo objeto de usuário
     const novoUsuario = {
-      id: Date.now.toString(), //Gera um ID único baseado no timestamp atual
+      id: Date.now().toString(), //Gera um ID único baseado no timestamp atual
       name: nome,
       address: {
         street: endereco,
@@ -56,10 +56,16 @@ export default function App() {
     setEndereco("");
   };
 
-  const excluirUsuario = (novoUsuario) => { 
-    setUsuarios(["", usuarios])
-    //if para validação "Deseja realmente excluir este usuário"
+const excluirUsuario = (usuario) => {
+  const resposta = window.confirm(
+    `Deseja realmente excluir ${usuario.name}?`
+  );
+  if(resposta){
+    setUsuarios((listaAtual) =>
+      listaAtual.filter((item) => String(item.id) !== String(usuario.id)),
+    );
   }
+};
 
   return (
     <View style={styles.container}>
@@ -100,7 +106,7 @@ export default function App() {
                 {item.address.street}, {item.address.suite} -{" "}
                 {item.address.city}
               </Text>
-              <TouchableOpacity style={[styles.botaoExcluir, styles.botaoVermelho]} onPress={excluirUsuario}>
+              <TouchableOpacity style={[styles.botaoExcluir, styles.botaoVermelho]} onPress={() => excluirUsuario(item)}>
                 <Text style={styles.textoBotao}>Excluir</Text>
               </TouchableOpacity>
             </View>
@@ -187,11 +193,13 @@ const styles = StyleSheet.create({
     margin: 5
   },
   botaoExcluir: {
-    height: 40,
-    padding: 12,
+    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 6,
     alignSelf: "flex-end",
-    margin: 5
+    justifyContent: "center",
+    margin: 5,
   },
   botaoVerde: {
     backgroundColor: "#047546d8",
