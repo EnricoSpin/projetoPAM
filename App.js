@@ -67,6 +67,10 @@ const excluirUsuario = (usuario) => {
   }
 };
 
+const editarUsuario = (usuario) => {
+
+}
+
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Sistema de Cadastro</Text>
@@ -87,7 +91,7 @@ const excluirUsuario = (usuario) => {
           onChangeText={setEndereco}
         />
 
-        <TouchableOpacity style={[styles.botao, styles.botaoVerde]} onPress={adicionarUsuario}>
+        <TouchableOpacity style={[styles.botaoForm, styles.botaoVerde]} onPress={adicionarUsuario}>
           <Text style={styles.textoBotao}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
@@ -106,7 +110,10 @@ const excluirUsuario = (usuario) => {
                 {item.address.street}, {item.address.suite} -{" "}
                 {item.address.city}
               </Text>
-              <TouchableOpacity style={[styles.botaoExcluir, styles.botaoVermelho]} onPress={() => excluirUsuario(item)}>
+              <TouchableOpacity style={[styles.botaoView, styles.botaoAzul]}>
+                <Text style={styles.textoBotao}>Editar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.botaoView, styles.botaoVermelho]} onPress={() => excluirUsuario(item)}>
                 <Text style={styles.textoBotao}>Excluir</Text>
               </TouchableOpacity>
             </View>
@@ -185,14 +192,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: "#f9f9f9",
   },
-  botao: {
+  botaoForm: {
     height: 50,
     padding: 12,
     borderRadius: 6,
     alignItems: "center",
     margin: 5
   },
-  botaoExcluir: {
+  botaoView: {
     padding: 16,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -206,6 +213,9 @@ const styles = StyleSheet.create({
   },
   botaoVermelho: {
     backgroundColor: "#DC3545"
+  },
+  botaoAzul: {
+    backgroundColor: "#1591EA"
   },
   textoBotao: {
     color: "#ffffff",
