@@ -17,6 +17,8 @@ export default function App() {
   // Estados para capturar os dados do formulário
   const [nome, setNome] = useState('');
   const [endereco, setEndereco] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
   
 
   useEffect(() => {
@@ -42,11 +44,9 @@ export default function App() {
     const novoUsuario = {
       id: Date.now().toString(), //Gera um ID único baseado no timestamp atual
       name: nome,
-      address: {
-        street: endereco,
-        suite: "",
-        city: "",
-      },
+      address: endereco,
+      latitude: latitude,
+      longitude: longitude,
     };
     // 3. Atualização do estado adicionando o novo item no início do array
     setUsuarios([novoUsuario, ...usuarios]);
@@ -54,10 +54,12 @@ export default function App() {
     // 4. Limpeza dos campos de texto do formulário
     setNome("");
     setEndereco("");
+    setLatitude("");
+    setLongitude("");
   };
 
 const excluirUsuario = (usuario) => {
-  const resposta = window.confirm(
+  const resposta = Alert.alert(
     `Deseja realmente excluir ${usuario.name}?`
   );
   if(resposta){
@@ -67,7 +69,7 @@ const excluirUsuario = (usuario) => {
   }
 };
 
-const editarUsuario = (usuario) => {
+const editarUsuario = () => {
 
 }
 
@@ -90,6 +92,20 @@ const editarUsuario = (usuario) => {
           value={endereco}
           onChangeText={setEndereco}
         />
+        <TextInput 
+          style={style.input}
+          placheholder={"Digite a Latitude"}
+          value={latitude}
+          onChangeText={setLatitude}
+        />
+        <TextInput
+          style={styles.input}
+          placheholder={"Digite a Longitude"}
+          value={longitude}
+          onChangeText={setLongitude}
+        />
+
+
 
         <TouchableOpacity style={[styles.botaoForm, styles.botaoVerde]} onPress={adicionarUsuario}>
           <Text style={styles.textoBotao}>Cadastrar</Text>
@@ -112,6 +128,9 @@ const editarUsuario = (usuario) => {
               </Text>
               <TouchableOpacity style={[styles.botaoView, styles.botaoAzul]}>
                 <Text style={styles.textoBotao}>Editar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.botaoView]}>
+                <Text style={styles.textoBotao}>Localização</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.botaoView, styles.botaoVermelho]} onPress={() => excluirUsuario(item)}>
                 <Text style={styles.textoBotao}>Excluir</Text>
