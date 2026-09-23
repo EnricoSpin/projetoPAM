@@ -59,7 +59,7 @@ export default function App() {
   };
 
 const excluirUsuario = (usuario) => {
-  const resposta = Alert.alert(
+  const resposta = window.prompt(
     `Deseja realmente excluir ${usuario.name}?`
   );
   if(resposta){
@@ -70,8 +70,14 @@ const excluirUsuario = (usuario) => {
 };
 
 const editarUsuario = () => {
+  setUsuarios((usuario) => usuario.map(setUsuarios(usuario.name, usuario.adress, usuario.latitude, usuario.longitude)))
+};
 
-}
+const mostarLocalizacao = (usuario) => { window.alert(
+    `Latitude: ${usuario.latitude},
+     Longitude ${usuario.longitude}`
+  );
+};
 
   return (
     <View style={styles.container}>
@@ -83,7 +89,7 @@ const editarUsuario = () => {
         <TextInput
           style={styles.input}
           placeholder="Digite o Nome"
-          value={nome}
+          value={nome}    
           onChangeText={setNome}
         />
         <TextInput
@@ -93,14 +99,14 @@ const editarUsuario = () => {
           onChangeText={setEndereco}
         />
         <TextInput 
-          style={style.input}
-          placheholder={"Digite a Latitude"}
+          style={styles .input}
+          placeholder="Digite a Latitude"
           value={latitude}
           onChangeText={setLatitude}
         />
         <TextInput
           style={styles.input}
-          placheholder={"Digite a Longitude"}
+          placeholder="Digite a Longitude"
           value={longitude}
           onChangeText={setLongitude}
         />
@@ -122,14 +128,13 @@ const editarUsuario = () => {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Text style={styles.nome}>{item.name}</Text>
-              <Text style={styles.endereco}>
-                {item.address.street}, {item.address.suite} -{" "}
-                {item.address.city}
-              </Text>
-              <TouchableOpacity style={[styles.botaoView, styles.botaoAzul]}>
+              <Text style={styles.endereco}>{item.endereco}</Text>
+              <Text>{item.latitude}</Text>
+              <Text>{item.longitude}</Text>
+              <TouchableOpacity style={[styles.botaoView, styles.botaoAzul]} onPress={() => editarUsuario}>
                 <Text style={styles.textoBotao}>Editar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.botaoView]}>
+              <TouchableOpacity style={[styles.botaoView, styles.botaoVerde]} onPress={() => mostarLocalizacao}>
                 <Text style={styles.textoBotao}>Localização</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.botaoView, styles.botaoVermelho]} onPress={() => excluirUsuario(item)}>
