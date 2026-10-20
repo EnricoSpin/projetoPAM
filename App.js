@@ -20,11 +20,29 @@ export default function App() {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   
+  navigator.geolocation.getCurrentPosition(
+    (posicao) => {
+      const latitude = posicao.coords.latitude;
+      const longitude = posicao.coords.longitude;
+  
+      console.log("Latitude:", latitude);
+      console.log("Longitude:", longitude);
+      console.log("Precisão (m):", posicao.coords.accuracy);
+    },
+    (erro) => {
+      console.log("Não foi possível obter a localização:", erro);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+  );
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => response.json())
-      .then((data) => {
+      .then((data) => {     
         setUsuarios(data);
         setCarregando(false);
       })
@@ -60,7 +78,7 @@ export default function App() {
 
 const excluirUsuario = (usuario) => {
   const resposta = window.prompt(
-    `Deseja realmente excluir ${usuario.name}?`
+    `Deseja realmente excluir ${  usuario.name}?`
   );
   if(resposta){
     setUsuarios((listaAtual) =>
@@ -73,11 +91,13 @@ const editarUsuario = () => {
   setUsuarios((usuario) => usuario.map(setUsuarios(usuario.name, usuario.adress, usuario.latitude, usuario.longitude)))
 };
 
-const mostarLocalizacao = (usuario) => { window.alert(
+const mostarLocalizacao = (usuario) => { 
+  window.alert(
     `Latitude: ${usuario.latitude},
-     Longitude ${usuario.longitude}`
+    Longitude ${usuario.longitude}`
   );
 };
+
 
   return (
     <View style={styles.container}>
@@ -99,7 +119,7 @@ const mostarLocalizacao = (usuario) => { window.alert(
           onChangeText={setEndereco}
         />
         <TextInput 
-          style={styles .input}
+          style={styles.input}
           placeholder="Digite a Latitude"
           value={latitude}
           onChangeText={setLatitude}
@@ -112,7 +132,9 @@ const mostarLocalizacao = (usuario) => { window.alert(
         />
 
 
-
+        <TouchableOpacity style={[styles.botaoForm, styles.botaoAzul]} onPress={mostarLocalizacao}>
+          <Text style={[styles.textoBotao]}>Mostrar Localização</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={[styles.botaoForm, styles.botaoVerde]} onPress={adicionarUsuario}>
           <Text style={styles.textoBotao}>Cadastrar</Text>
         </TouchableOpacity>
