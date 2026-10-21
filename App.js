@@ -16,33 +16,14 @@ export default function App() {
   const [carregando, setCarregando] = useState(true);
   // Estados para capturar os dados do formulário
   const [nome, setNome] = useState('');
-  const [endereco, setEndereco] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [precisao, setPrecisao] = useState(null); 
   
-  navigator.geolocation.getCurrentPosition(
-    (posicao) => {
-      const latitude = posicao.coords.latitude;
-      const longitude = posicao.coords.longitude;
-  
-      console.log("Latitude:", latitude);
-      console.log("Longitude:", longitude);
-      console.log("Precisão (m):", posicao.coords.accuracy);
-    },
-    (erro) => {
-      console.log("Não foi possível obter a localização:", erro);
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0
-    }
-  );
-
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((data) => {     
+    .then((response) => response.json())
+    .then((data) => {     
         setUsuarios(data);
         setCarregando(false);
       })
@@ -50,59 +31,79 @@ export default function App() {
         console.error("Erro ao buscar dados:", error);
         setCarregando(false);
       });
-  }, []);
+    }, []);
   
-  const adicionarUsuario = () => {
-    // 1. Validação básica: verifica se algum campo está vazio
-    if (!nome.trim() || !endereco.trim()) {
-      Alert.alert("Atenção", "Por favor, preencha o nome e o endreço");
-      return;
-    }
-    // 2. Criação do novo objeto de usuário
-    const novoUsuario = {
-      id: Date.now().toString(), //Gera um ID único baseado no timestamp atual
-      name: nome,
-      address: endereco,
-      latitude: latitude,
-      longitude: longitude,
+    const adicionarUsuario = () => {
+      // 1. Validação básica: verifica se algum campo está vazio
+      if (!nome.trim() || !latitude.trim() || !longitude.trim() || !precisao.trim()) {
+        //Alert.alert
+        window.alert("Atenção", "Por favor, preencha o nome e o endreço");
+        return;
+      }
+      // 2. Criação do novo objeto de usuário
+      const novoUsuario = {
+        id: Date.now().toString(), //Gera um ID único baseado no timestamp atual
+        name: nome,
+        latitude: latitude,
+        longitude: longitude,
+        precisaoEstimada : precisao
+      };
+      // 3. Atualização do estado adicionando o novo item no início do array
+      setUsuarios([novoUsuario, ...usuarios]);
+      
+      // 4. Limpeza dos campos de texto do formulário
+      setNome('');
+      setLatitude('');
+      setLongitude('');
+      setPrecisao('')
     };
-    // 3. Atualização do estado adicionando o novo item no início do array
-    setUsuarios([novoUsuario, ...usuarios]);
-
-    // 4. Limpeza dos campos de texto do formulário
-    setNome("");
-    setEndereco("");
-    setLatitude("");
-    setLongitude("");
+    
+    const excluirUsuario = (usuario) => {
+      const resposta = window.prompt(
+        `Deseja realmente excluir ${  usuario.name}?`
+      );      
+      if(resposta){
+        setUsuarios((listaAtual) =>
+          listaAtual.filter((item) => String(item.id) !== String(usuario.id)),
+      );
+    }
   };
-
-const excluirUsuario = (usuario) => {
-  const resposta = window.prompt(
-    `Deseja realmente excluir ${  usuario.name}?`
-  );
-  if(resposta){
-    setUsuarios((listaAtual) =>
-      listaAtual.filter((item) => String(item.id) !== String(usuario.id)),
+  
+  const editarUsuario = () => {
+    setUsuarios((usuario) => usuario.map(setUsuarios(usuario.name, usuario.latitude, usuario.longitude, usuario.precisao)))
+  };
+  
+  const mostarLocalizacao = (usuario) => { 
+    window.alert(
+      `Latitude: ${usuario.latitude}, \nLongitude ${usuario.longitude}, \nPrecisão Estimada ${usuario.precisaoEstimada}`
+    );
+  };
+  
+  const solicitarLocalizacao = () => {
+    navigator.geolocation.getCurrentPosition(
+      (posicao) => {
+        setLatitude(posicao.coords.latitude);
+        setLatitude(posicao.coords.longitude) ;
+    
+        console.log("Latitude:", latitude);
+        console.log("Longitude:", longitude);
+        console.log("Precisão (m):", posicao.coords.accuracy);
+      },
+      (erro) => {
+        console.log("Não foi possível obter a localização:", erro);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
     );
   }
-};
-
-const editarUsuario = () => {
-  setUsuarios((usuario) => usuario.map(setUsuarios(usuario.name, usuario.adress, usuario.latitude, usuario.longitude)))
-};
-
-const mostarLocalizacao = (usuario) => { 
-  window.alert(
-    `Latitude: ${usuario.latitude},
-    Longitude ${usuario.longitude}`
-  );
-};
-
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Sistema de Cadastro</Text>
-      <Text style={styles.nomeAluno}>Aluno: Enrico 3ºDS</Text>
+      <Text style={styles.nomeAluno}>Aluno: Enrico e Tiago 3ºDS</Text>
 
       {/* Formulário de Cadastro */}
       <View style={styles.form}>
@@ -112,30 +113,33 @@ const mostarLocalizacao = (usuario) => {
           value={nome}    
           onChangeText={setNome}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Digite o Endereço"
-          value={endereco}
-          onChangeText={setEndereco}
-        />
         <TextInput 
           style={styles.input}
-          placeholder="Digite a Latitude"
+          placeholder="Longitude"
           value={latitude}
           onChangeText={setLatitude}
-        />
+        />  
         <TextInput
           style={styles.input}
-          placeholder="Digite a Longitude"
+          placeholder="Longitude"
           value={longitude}
           onChangeText={setLongitude}
         />
+        <TextInput
+          style={styles.input}
+          placeholder="Precisão Estimada"
+          value={precisao}
+          onChangeText={setPrecisao}
+        />
 
 
-        <TouchableOpacity style={[styles.botaoForm, styles.botaoAzul]} onPress={mostarLocalizacao}>
+          <TouchableOpacity style={[styles.botaoForm, {backgroundColor: '#044d7efd'}]} onPress={solicitarLocalizacao}>
+          <Text style={[styles.textoBotao]}>Solicitar Localização</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.botaoForm, {backgroundColor: '#0ba04e'}]} onPress={mostarLocalizacao}>
           <Text style={[styles.textoBotao]}>Mostrar Localização</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.botaoForm, styles.botaoVerde]} onPress={adicionarUsuario}>
+        <TouchableOpacity style={[styles.botaoForm, {backgroundColor: '#e2541c'}]} onPress={adicionarUsuario}>
           <Text style={styles.textoBotao}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
@@ -150,16 +154,16 @@ const mostarLocalizacao = (usuario) => {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Text style={styles.nome}>{item.name}</Text>
-              <Text style={styles.endereco}>{item.endereco}</Text>
-              <Text>{item.latitude}</Text>
-              <Text>{item.longitude}</Text>
-              <TouchableOpacity style={[styles.botaoView, styles.botaoAzul]} onPress={() => editarUsuario}>
+              <Text style={styles.outrosAlemDeNome}>{item.latitude}</Text>
+              <Text style={styles.outrosAlemDeNome}>{item.longitude}</Text>
+              <Text style={styles.outrosAlemDeNome}>{item.precisao}</Text>
+              <TouchableOpacity style={[styles.botaoView, {backgroundColor: '#1591ea'}]} onPress={() => editarUsuario}>
                 <Text style={styles.textoBotao}>Editar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.botaoView, styles.botaoVerde]} onPress={() => mostarLocalizacao}>
+              <TouchableOpacity style={[styles.botaoView, {backgroundColor: '#047546d8'}]} onPress={() => mostarLocalizacao}>
                 <Text style={styles.textoBotao}>Localização</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.botaoView, styles.botaoVermelho]} onPress={() => excluirUsuario(item)}>
+              <TouchableOpacity style={[styles.botaoView, {backgroundColor: '#DC3545'}]} onPress={() => excluirUsuario(item)}>
                 <Text style={styles.textoBotao}>Excluir</Text>
               </TouchableOpacity>
             </View>
@@ -176,7 +180,7 @@ const mostarLocalizacao = (usuario) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#018d19",
+    backgroundColor: "#3f648f",
     paddingTop: 60,
     paddingHorizontal: 20,
   },
@@ -213,7 +217,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
-  endereco: {
+  outrosAlemDeNome: {
     fontSize: 14,
     color: "#666",
     marginTop: 4,
@@ -253,15 +257,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     justifyContent: "center",
     margin: 5,
-  },
-  botaoVerde: {
-    backgroundColor: "#047546d8",
-  },
-  botaoVermelho: {
-    backgroundColor: "#DC3545"
-  },
-  botaoAzul: {
-    backgroundColor: "#1591EA"
   },
   textoBotao: {
     color: "#ffffff",
