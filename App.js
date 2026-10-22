@@ -16,9 +16,9 @@ export default function App() {
   const [carregando, setCarregando] = useState(true);
   // Estados para capturar os dados do formulário
   const [nome, setNome] = useState('');
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
-  const [precisao, setPrecisao] = useState(null); 
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [precisao, setPrecisao] = useState(''); 
   
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -46,7 +46,7 @@ export default function App() {
         name: nome,
         latitude: latitude,
         longitude: longitude,
-        precisaoEstimada : precisao
+        precisao: precisao
       };
       // 3. Atualização do estado adicionando o novo item no início do array
       setUsuarios([novoUsuario, ...usuarios]);
@@ -60,7 +60,7 @@ export default function App() {
     
     const excluirUsuario = (usuario) => {
       const resposta = window.prompt(
-        `Deseja realmente excluir ${  usuario.name}?`
+        `Deseja realmente excluir ${usuario.name}?`
       );      
       if(resposta){
         setUsuarios((listaAtual) =>
@@ -75,15 +75,16 @@ export default function App() {
   
   const mostarLocalizacao = (usuario) => { 
     window.alert(
-      `Latitude: ${usuario.latitude}, \nLongitude ${usuario.longitude}, \nPrecisão Estimada ${usuario.precisaoEstimada}`
+      `Latitude: ${usuario.latitude}, \nLongitude: ${usuario.longitude}, \nPrecisão Estimada: ${usuario.precisao}`
     );
   };
   
   const solicitarLocalizacao = () => {
     navigator.geolocation.getCurrentPosition(
       (posicao) => {
-        setLatitude(posicao.coords.latitude);
-        setLatitude(posicao.coords.longitude) ;
+        setLatitude(String(posicao.coords.latitude));
+        setLongitude(String(posicao.coords.longitude));
+        setPrecisao(String(posicao.coords.accuracy))
     
         console.log("Latitude:", latitude);
         console.log("Longitude:", longitude);
@@ -103,7 +104,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Sistema de Cadastro</Text>
-      <Text style={styles.nomeAluno}>Aluno: Enrico e Tiago 3ºDS</Text>
+      <Text style={styles.nomeAluno}>Alunos: Enrico e Tiago - 3ºDS</Text>
 
       {/* Formulário de Cadastro */}
       <View style={styles.form}>
@@ -115,7 +116,7 @@ export default function App() {
         />
         <TextInput 
           style={styles.input}
-          placeholder="Longitude"
+          placeholder="Latitude"
           value={latitude}
           onChangeText={setLatitude}
         />  
@@ -136,9 +137,7 @@ export default function App() {
           <TouchableOpacity style={[styles.botaoForm, {backgroundColor: '#044d7efd'}]} onPress={solicitarLocalizacao}>
           <Text style={[styles.textoBotao]}>Solicitar Localização</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.botaoForm, {backgroundColor: '#0ba04e'}]} onPress={mostarLocalizacao}>
-          <Text style={[styles.textoBotao]}>Mostrar Localização</Text>
-        </TouchableOpacity>
+
         <TouchableOpacity style={[styles.botaoForm, {backgroundColor: '#e2541c'}]} onPress={adicionarUsuario}>
           <Text style={styles.textoBotao}>Cadastrar</Text>
         </TouchableOpacity>
@@ -154,18 +153,22 @@ export default function App() {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Text style={styles.nome}>{item.name}</Text>
-              <Text style={styles.outrosAlemDeNome}>{item.latitude}</Text>
-              <Text style={styles.outrosAlemDeNome}>{item.longitude}</Text>
-              <Text style={styles.outrosAlemDeNome}>{item.precisao}</Text>
-              <TouchableOpacity style={[styles.botaoView, {backgroundColor: '#1591ea'}]} onPress={() => editarUsuario}>
+              <Text style={styles.outrosAlemDeNome}>Latitude: {item.latitude}</Text>
+              <Text style={styles.outrosAlemDeNome}>Longitude: {item.longitude}</Text>
+              <Text style={styles.outrosAlemDeNome}>Precisão Estimada: {item.precisao}</Text>
+
+              <TouchableOpacity style={[styles.botaoView, {backgroundColor: '#1591ea'}]} onPress={() => editarUsuario()}>
                 <Text style={styles.textoBotao}>Editar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.botaoView, {backgroundColor: '#047546d8'}]} onPress={() => mostarLocalizacao}>
-                <Text style={styles.textoBotao}>Localização</Text>
-              </TouchableOpacity>
+
               <TouchableOpacity style={[styles.botaoView, {backgroundColor: '#DC3545'}]} onPress={() => excluirUsuario(item)}>
                 <Text style={styles.textoBotao}>Excluir</Text>
               </TouchableOpacity>
+
+              <TouchableOpacity style={[styles.botaoView, {backgroundColor: '#047546d8'}]} onPress={() => mostarLocalizacao(item)}>
+                <Text style={styles.textoBotao}>Mostrar Localização</Text>
+              </TouchableOpacity>
+
             </View>
           )}
           style={styles.lista}
